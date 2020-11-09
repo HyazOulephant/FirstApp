@@ -1,6 +1,7 @@
 package fr.yncrea.basicpdf;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
@@ -10,25 +11,43 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.TextAlignment;
 
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import java.util.Random;
 
+@RequiresApi(api = Build.VERSION_CODES.O)
 public class MainActivity extends AppCompatActivity {
 
     private static final int STORAGE_CODE = 1000;
 
     //Views
-    EditText mTextEt;
     Button mSaveBtn;
+
+    // generated data
+    Random random = new Random();
+    int mFactureRef = random.nextInt(999) + 1;
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    LocalDateTime now = LocalDateTime.now();
+    String current = dtf.format(now);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,21 +108,45 @@ public class MainActivity extends AppCompatActivity {
     }*/
 
     private void savePdf(){
-        String mFileName = "Document";
+        String mFileName = "Document-" + mFactureRef;
         String mPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + mFileName + ".pdf";
         PdfWriter writer;
 
+        // generating text
             try {
                 writer = new PdfWriter(new FileOutputStream(mPath));
                 PdfDocument pdf = new PdfDocument(writer);
                 Document document = new Document(pdf);
 
-                Text text = new Text("Hello World PDF created using iText")
-                        .setFontSize(15);
+                Text mTitre = new Text("Malterie Brasserie des Carnutes")
+                        .setFontSize(30).setBold();
+                Text mSousTitre = new Text("37 rue des Montfort \n 45170 Neuville-aux-Bois")
+                        .setFontSize(20);
+                Text mFacture = new Text("Facture : " + mFactureRef)
+                        .setFontSize(30);
+                Text mDate = new Text("Date : " + current)
+                        .setFontSize(20).setWidth(100); //doit etre à droite
 
-                //Add paragraph to the document
-                document.add(new Paragraph(text));
-                document.add(new Paragraph("je sais ecrire!"));
+                // Creating table
+                float [] pointColumnWidths = {50F, 150F, 50F, 100F, 100F, 100F};
+                Table table = new Table(pointColumnWidths);
+
+                // creating cells
+                table.addCell(new Cell().add("Réf"));
+                table.addCell(new Cell().add("Désignation"));
+                table.addCell(new Cell().add("Unité"));
+                table.addCell(new Cell().add("Quantité"));
+                table.addCell(new Cell().add("PU HT"));
+                table.addCell(new Cell().add("Total HT"));
+                //fonction remplissage
+
+
+                //Add content to document
+                document.add(new Paragraph(mTitre));
+                document.add(new Paragraph(mSousTitre));
+                document.add(new Paragraph(mDate));
+                document.add(new Paragraph(mFacture));
+                document.add(table);
                 document.close();
                 Toast.makeText(this, mFileName + ".pdf \n is saved to \n" + mPath, Toast.LENGTH_LONG).show();
 
