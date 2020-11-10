@@ -15,11 +15,14 @@ import android.widget.Toast;
 
 
 import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.draw.DottedLine;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
@@ -118,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 PdfDocument pdf = new PdfDocument(writer);
                 Document document = new Document(pdf);
 
+                // header
                 Text mTitre = new Text("Malterie Brasserie des Carnutes")
                         .setFontSize(30).setBold();
                 Text mSousTitre = new Text("37 rue des Montfort \n 45170 Neuville-aux-Bois")
@@ -125,9 +129,12 @@ public class MainActivity extends AppCompatActivity {
                 Text mFacture = new Text("Facture : " + mFactureRef)
                         .setFontSize(30);
                 Text mDate = new Text("Date : " + current)
-                        .setFontSize(20).setWidth(100); //doit etre à droite
+                        .setFontSize(20).setWidth(100);
+                // LINE SEPARATOR
+                LineSeparator lineSeparator = new LineSeparator(new DottedLine());
+                lineSeparator.setStrokeColor(new DeviceRgb(0, 0, 68));
 
-                // Creating table
+                // creating table
                 float [] pointColumnWidths = {50F, 150F, 50F, 100F, 100F, 100F};
                 Table table = new Table(pointColumnWidths);
 
@@ -138,15 +145,34 @@ public class MainActivity extends AppCompatActivity {
                 table.addCell(new Cell().add("Quantité"));
                 table.addCell(new Cell().add("PU HT"));
                 table.addCell(new Cell().add("Total HT"));
-                //fonction remplissage
+                table.setFontSize(15);
+                //FONCTION REMPLISSAGE
+
+                // creating bottom table
+                float [] arrangedPointColumnWidths = {700F,300F};
+                Table bottomTable = new Table(arrangedPointColumnWidths);
+                // creating cells
+                bottomTable.addCell(new Cell().add("Mode de régelment : Virement \n Echeance de paiement :  \n Réglements :").setBorder(Border.NO_BORDER));
+                bottomTable.addCell(new Cell().add("Total").setBorder(Border.NO_BORDER).setBackgroundColor(Color.RED));
+                bottomTable.addCell(new Cell().add("\n\n\nTVA non applicable, article 293B du CGI").setBorder(Border.NO_BORDER));
+                bottomTable.setFixedPosition(40,40,500).setFontSize(15);
 
 
-                //Add content to document
+
+
+                // adding content to document
                 document.add(new Paragraph(mTitre));
                 document.add(new Paragraph(mSousTitre));
                 document.add(new Paragraph(mDate));
+
+                // space with line
+                document.add(new Paragraph(""));
+                document.add(lineSeparator);
+                document.add(new Paragraph(""));
+
                 document.add(new Paragraph(mFacture));
                 document.add(table);
+                document.add(bottomTable);
                 document.close();
                 Toast.makeText(this, mFileName + ".pdf \n is saved to \n" + mPath, Toast.LENGTH_LONG).show();
 

@@ -37,6 +37,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+
     //write pdf library v5
     //implementation 'com.itextpdf:itextg:5.5.10'
 
