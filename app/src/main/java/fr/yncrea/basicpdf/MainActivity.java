@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     // generated data
     Random random = new Random();
-    int mFactureRef = random.nextInt(999) + 1;
+    int factureRef = 0;
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     LocalDate date =  LocalDate.now();
     String today = dtf.format(date);
@@ -87,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void savePdf(){
-        String mFileName = "Document-" + mFactureRef;
+        factureRef = random.nextInt(999) + 1;
+        String mFileName = "Document-" + factureRef;
         String mPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + mFileName + ".pdf";
         PdfWriter writer;
 
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         .setFontSize(30).setBold();
                 Text mSousTitre = new Text("37 rue des Montfort \n 45170 Neuville-aux-Bois")
                         .setFontSize(20);
-                Text mFacture = new Text("Facture : " + mFactureRef)
+                Text mFacture = new Text("Facture : " + factureRef)
                         .setFontSize(30);
                 Text mDate = new Text("Date : " + today)
                         .setFontSize(20).setWidth(100);
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 document.add(table);
                 document.add(bottomTable);
                 document.close();
-                Toast.makeText(this, mFileName + ".pdf \n is saved to \n" + mPath, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, mFileName + ".pdf \n stocké dans \n" + mPath, Toast.LENGTH_LONG).show();
 
             } catch (Exception e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Permission refusée", Toast.LENGTH_SHORT).show();
                 }
             }
         }
