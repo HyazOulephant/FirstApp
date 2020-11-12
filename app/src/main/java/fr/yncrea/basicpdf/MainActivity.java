@@ -26,14 +26,11 @@ import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 
 import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.Random;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -48,8 +45,10 @@ public class MainActivity extends AppCompatActivity {
     Random random = new Random();
     int mFactureRef = random.nextInt(999) + 1;
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    LocalDateTime now = LocalDateTime.now();
-    String current = dtf.format(now);
+    LocalDate date =  LocalDate.now();
+    String today = dtf.format(date);
+    String nextMonth = dtf.format(date.plusMonths(1));
+
 
 
     @Override
@@ -86,29 +85,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /* //v5
-    private void savePdf() {
-        // initialize doc
-        Document mDoc = new Document();
-        String mFileName = "Doki Dok";
-        String mFilePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + mFileName + ".pdf";
-
-        // build doc
-        try {
-            PdfWriter.getInstance(mDoc, new FileOutputStream(mFilePath));
-            mDoc.open();
-            mDoc.addTitle("Titre");
-            String mText = mTextEt.getText().toString();
-            mDoc.add(new Paragraph(mText));
-            mDoc.add(new Paragraph("texte 1"));
-            mDoc.add(new Paragraph("texte 2"));
-            mDoc.close();
-            Toast.makeText(this, mFileName + ".pdf \n is saved to \n" + mFilePath, Toast.LENGTH_LONG).show();
-        }
-        catch (Exception e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }*/
 
     private void savePdf(){
         String mFileName = "Document-" + mFactureRef;
@@ -128,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                         .setFontSize(20);
                 Text mFacture = new Text("Facture : " + mFactureRef)
                         .setFontSize(30);
-                Text mDate = new Text("Date : " + current)
+                Text mDate = new Text("Date : " + today)
                         .setFontSize(20).setWidth(100);
                 // LINE SEPARATOR
                 LineSeparator lineSeparator = new LineSeparator(new DottedLine());
@@ -139,21 +115,22 @@ public class MainActivity extends AppCompatActivity {
                 Table table = new Table(pointColumnWidths);
 
                 // creating cells
-                table.addCell(new Cell().add("Réf"));
-                table.addCell(new Cell().add("Désignation"));
-                table.addCell(new Cell().add("Unité"));
-                table.addCell(new Cell().add("Quantité"));
-                table.addCell(new Cell().add("PU HT"));
-                table.addCell(new Cell().add("Total HT"));
+                table.addCell(new Cell().add("Réf").setBackgroundColor(Color.RED).setFontColor(Color.WHITE).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBold());
+                table.addCell(new Cell().add("Désignation").setBackgroundColor(Color.RED).setFontColor(Color.WHITE).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBold());
+                table.addCell(new Cell().add("Unité").setBackgroundColor(Color.RED).setFontColor(Color.WHITE).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBold());
+                table.addCell(new Cell().add("Quantité").setBackgroundColor(Color.RED).setFontColor(Color.WHITE).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBold());
+                table.addCell(new Cell().add("PU HT").setBackgroundColor(Color.RED).setFontColor(Color.WHITE).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBold());
+                table.addCell(new Cell().add("Total HT").setBackgroundColor(Color.RED).setFontColor(Color.WHITE).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER).setBold());
                 table.setFontSize(15);
                 //FONCTION REMPLISSAGE
+
 
                 // creating bottom table
                 float [] arrangedPointColumnWidths = {700F,300F};
                 Table bottomTable = new Table(arrangedPointColumnWidths);
                 // creating cells
-                bottomTable.addCell(new Cell().add("Mode de régelment : Virement \n Echeance de paiement :  \n Réglements :").setBorder(Border.NO_BORDER));
-                bottomTable.addCell(new Cell().add("Total").setBorder(Border.NO_BORDER).setBackgroundColor(Color.RED));
+                bottomTable.addCell(new Cell().add("Mode de régelment : Virement \n Echeance de paiement : " + nextMonth +"  \n Réglements :").setBorder(Border.NO_BORDER));
+                bottomTable.addCell(new Cell().add("Total HT \nRéglements :\nNet à payer : ").setBorder(Border.NO_BORDER).setBackgroundColor(Color.RED).setFontColor(Color.WHITE));
                 bottomTable.addCell(new Cell().add("\n\n\nTVA non applicable, article 293B du CGI").setBorder(Border.NO_BORDER));
                 bottomTable.setFixedPosition(40,40,500).setFontSize(15);
 
